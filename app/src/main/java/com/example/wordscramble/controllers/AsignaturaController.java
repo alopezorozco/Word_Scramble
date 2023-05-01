@@ -30,7 +30,7 @@ public class AsignaturaController {
 
             @Override
             public void onFail(String msg) {
-                Toast.makeText(recyclerView.getContext(), msg.toString(), Toast.LENGTH_LONG).show();
+                //Toast.makeText(recyclerView.getContext(), msg.toString(), Toast.LENGTH_LONG).show();
             }
         });
     }
