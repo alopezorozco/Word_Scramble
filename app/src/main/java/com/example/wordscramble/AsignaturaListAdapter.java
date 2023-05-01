@@ -1,6 +1,7 @@
 package com.example.wordscramble;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,22 @@ public class AsignaturaListAdapter extends RecyclerView.Adapter<AsignaturaListAd
     public void onBindViewHolder(@NonNull AsignaturaViewHolder holder, int position) {
         //obtiene el elemento actual
         Asignatura asignatura = listaAsignatura.get(position);
+
+        //configurar el listener para el evento onclick sobre el textview
+        holder.asignaturaItemView.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+            public void onClick(View view) {
+                //crear un intent para abrir la actividad deseada
+                Intent intent = new Intent(view.getContext(), AdivinarPalabraActivity.class);
+
+                //enviamos la asignatura seleccionada a la otra Activity
+                intent.putExtra("asignatura", asignatura.getAsignombre());
+
+                //iniciar la activity
+                view.getContext().startActivity(intent);
+            }
+        });
 
         //asigna el valor al textview
         holder.asignaturaItemView.setText(asignatura.getAsignombre());
