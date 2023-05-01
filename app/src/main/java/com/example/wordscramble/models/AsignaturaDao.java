@@ -29,9 +29,11 @@ public class AsignaturaDao {
 
     /**
      * recupera todas las asignaturas de la base de datos
+     *
      * @param onCallBack
+     * @return
      */
-    public void getAllAsignatures(final CallBack onCallBack){
+    public AsignaturaDao obtenerAsignaturas(final CallBack onCallBack){
         //URL del endpoint
         String url = "http://192.168.1.79:8080/asignatura";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
@@ -51,7 +53,7 @@ public class AsignaturaDao {
 
                         //agregamos los datos a la lista
                         asignaturas.add(new Asignatura(asigId, nombreAsignatura));
-                    }
+                    }//fin del for
                     onCallBack.onSuccess(asignaturas);
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -66,6 +68,7 @@ public class AsignaturaDao {
             }
         });
         mRequestQueue.add(stringRequest);
+        return null;
     }
 
     public interface CallBack {
