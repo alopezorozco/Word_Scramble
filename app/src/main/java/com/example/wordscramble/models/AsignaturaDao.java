@@ -8,6 +8,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.wordscramble.GlobalVariables;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +36,7 @@ public class AsignaturaDao {
      */
     public AsignaturaDao obtenerAsignaturas(final CallBack onCallBack){
         //URL del endpoint
-        String url = "http://192.168.1.79:8080/asignatura";
+        String url = GlobalVariables.URL+"asignatura";
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {

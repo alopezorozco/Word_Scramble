@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Word Scramble</string>
+    <string name="aceptar">Ok</string>
+    <string name="ayuda">Ayuda</string>
 </resources>

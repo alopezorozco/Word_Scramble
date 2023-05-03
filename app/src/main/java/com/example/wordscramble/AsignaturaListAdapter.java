@@ -56,7 +56,8 @@ public class AsignaturaListAdapter extends RecyclerView.Adapter<AsignaturaListAd
                 //crear un intent para abrir la actividad deseada
                 Intent intent = new Intent(view.getContext(), AdivinarPalabraActivity.class);
 
-                //enviamos la asignatura seleccionada a la otra Activity
+                //enviamos el id. y el nombre de la asignatura seleccionada a la otra Activity
+                intent.putExtra("id", asignatura.getAsigId());
                 intent.putExtra("asignatura", asignatura.getAsignombre());
 
                 //iniciar la activity
