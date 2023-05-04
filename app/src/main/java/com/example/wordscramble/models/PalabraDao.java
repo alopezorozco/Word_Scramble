@@ -27,9 +27,6 @@ public class PalabraDao {
         mRequestQueue = Volley.newRequestQueue(this.context);
     }
 
-
-
-
     /**
      * Obtiene la palabra a adivinar de la base de datos
      * @param onCallBack
@@ -98,7 +95,7 @@ public class PalabraDao {
         }
 
         //definimos la URL
-        String url = "http://192.168.1.79:8080/save-acierto/acierto";
+        String url = GlobalVariables.URL + "/save-acierto/acierto";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject,
                 response -> {
