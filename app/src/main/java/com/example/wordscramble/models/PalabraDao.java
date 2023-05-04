@@ -3,6 +3,8 @@ package com.example.wordscramble.models;
 import android.content.Context;
 import android.net.Uri;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -15,6 +17,9 @@ import com.example.wordscramble.GlobalVariables;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class PalabraDao {
     private Palabra palabra = null;
@@ -75,6 +80,10 @@ public class PalabraDao {
                 error.printStackTrace();
             }
         });
+
+
+
+
         mRequestQueue.add(stringRequest);
         return null;
     }//fin del método
@@ -86,13 +95,14 @@ public class PalabraDao {
 
         User user = new User(1);
         Palabra palabra = new Palabra(1);
-        try{
-            jsonObject.put("Usuario", user);
-            jsonObject.put("Palabra", palabra);
-            //jsonObject.put("", 5);
-        }catch(JSONException ex){
-            ex.printStackTrace();
-        }
+
+            try{
+                jsonObject.put("Usuario", user);
+                jsonObject.put("Palabra", palabra);
+                //jsonObject.put("", 5);
+            }catch(JSONException ex){
+                ex.printStackTrace();
+            }
 
         //definimos la URL
         String url = GlobalVariables.URL + "/save-acierto/acierto";

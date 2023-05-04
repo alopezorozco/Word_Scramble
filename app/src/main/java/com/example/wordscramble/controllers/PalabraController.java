@@ -40,6 +40,7 @@ public class PalabraController {
 
         ayuda = (TextView) view.findViewById(R.id.texto_ayuda);
 
+
         btnAyuda = (Button) view.findViewById(R.id.boton_ayuda);
 
         respuesta = (EditText) view.findViewById(R.id.edPalabraOrdenada);
@@ -103,6 +104,7 @@ public class PalabraController {
             public void onSuccess(Palabra palabra) {
                 try {
                      //asignamos sus valores de manera asyncrona
+
                      palabraAAdivinar.setText(palabra.getPalabra().toLowerCase());
                      palabraDesordenada.setText(desordenarPalabra(palabra.getPalabra().toLowerCase()));
                      ayuda.setText(palabra.getDescripcion());
