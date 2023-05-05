@@ -83,32 +83,13 @@ public class PalabraDao {
         return null;
     }//fin del método
 
-    /*public void guardarAcierto(int idUsuario, int idPalabra, final CallBack onCallBack){
-        //URL del endpoint
-        String url = GlobalVariables.URL+"guardar-acierto/"+Uri.encode(String.valueOf(idUsuario))+"/" +
-                Uri.encode(String.valueOf(idPalabra));
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                response = "Los datos han sido guardados";
-            }
-
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                try {
-                    throw new Exception("prueba");
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        });
-
-        mRequestQueue.add(stringRequest);
-    }//fin del método guardarAcierto*/
-
-    //método para guardar la palabra encontrada
+    /**
+     * Método para guardar el Acierto de la palabra adivinada por el usuario
+     * @param idUsuario
+     * @param idPalabra
+     * @param onCallBack
+     */
     public void guadarAcierto(int idUsuario, int idPalabra, final CallBackValidation onCallBack){
         String url = GlobalVariables.URL+"guardar-acierto/"+Uri.encode(String.valueOf(idUsuario))+"/" +
                 Uri.encode(String.valueOf(idPalabra));
