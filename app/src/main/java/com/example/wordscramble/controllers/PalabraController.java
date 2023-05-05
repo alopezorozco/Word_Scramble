@@ -6,18 +6,29 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.example.wordscramble.AdivinarPalabraActivity;
 import com.example.wordscramble.R;
 import com.example.wordscramble.models.Palabra;
 import com.example.wordscramble.models.PalabraDao;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import androidx.lifecycle.ViewModelProvider;
+
 public class PalabraController {
     private Context context;
     private AdivinarPalabraActivity view;
+    private int idAsignatura;
+
 
     //variables para las views
     private TextView palabraAAdivinar;  //se le asigna la palabra obtenida desde la bd
@@ -26,6 +37,8 @@ public class PalabraController {
     private Button btnAyuda; //hace visible la ayuda de la palabra a adivinar
     private EditText respuesta; //respuesta del usuario
     private Button btnOk; //compara si lo que escribió el usuario coincide con la palabra a adivinar
+
+    private TextView idPalabra; //almacena la clave de la palabra a adivinar
 
 
 
@@ -47,11 +60,15 @@ public class PalabraController {
 
         btnOk = (Button) view.findViewById(R.id.aceptar);
 
+        idPalabra = (TextView) view.findViewById(R.id.idPalabra);
+
 
 
         //ocultamos algunas views claves
         palabraAAdivinar.setVisibility(View.INVISIBLE);
         ayuda.setVisibility(View.INVISIBLE);
+        idPalabra.setVisibility(View.INVISIBLE);
+
 
         //listen del botón btnayuda
         btnAyuda.setOnClickListener(new View.OnClickListener() {
@@ -76,13 +93,58 @@ public class PalabraController {
         String palabraOrigen = palabraAAdivinar.getText().toString().toLowerCase();
 
         if (palabraOrigen.equals(palabraDeUsuario)){
-            Toast.makeText(this.context, "Correcto", Toast.LENGTH_LONG).show();
+            guardarPalabra();
 
-            //creamos un objeto de tipo PalabraDao y llamamos al método para actualizar la
-            //bd
-            PalabraDao palabraDao = new PalabraDao(this.context);
-            palabraDao.guadarAcierto();
+            try{
+                Thread.sleep(2000);
+            }catch(InterruptedException ex){
+                ex.printStackTrace();
+            }
+            limpiarVista();
+            mostrarPalabra(idAsignatura);
+        }else{
+            Toast.makeText(this.context,"Las palabras no coinciden", Toast.LENGTH_LONG).show();
         }
+
+        respuesta.setText("");
+        respuesta.requestFocus();
+        ayuda.setVisibility(View.INVISIBLE);
+    }
+
+    private void limpiarVista() {
+        respuesta.setText("");
+        ayuda.setText("");
+        palabraDesordenada.setText("");
+        palabraDesordenada.setText("");
+    }
+
+    /**
+     * Guarda la palabra en la base de datos
+     */
+    private void guardarPalabra() {
+        //creamos un objeto de tipo PalabraDao y llamamos al método para actualizar la         //bd
+        int idP = Integer.parseInt(idPalabra.getText().toString());
+        PalabraDao palabraDao = new PalabraDao(this.context);
+
+        palabraDao.guadarAcierto(1, idP, new PalabraDao.CallBackValidation() {
+            @Override
+            public void onSuccess(String respuesta) {
+                if (Boolean.valueOf(respuesta)){
+                        Toast.makeText(context, "Felicidades, has " +
+                                "adivinado la palabra y se ha incrementado" +
+                                "tu puntuación", Toast.LENGTH_LONG).show();
+                }else{
+                    Toast.makeText(context, "Felicidades, has " +
+                            "adivinado la palabra pero no se pudo " +
+                            "registrar tu nueva puntuación", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFail(String msg) {
+                Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     //muestra inform. sobre la palabra a adivinar
@@ -96,7 +158,7 @@ public class PalabraController {
      * @param idAsignatura
      */
     public void mostrarPalabra(int idAsignatura) {
-
+        this.idAsignatura = idAsignatura;
         PalabraDao.idAsignatura = idAsignatura; //pasamos el Id. de la asignatura
         PalabraDao palabraDao = new PalabraDao(this.context).obtenerPalabra(new PalabraDao.CallBack() {
 
@@ -104,7 +166,7 @@ public class PalabraController {
             public void onSuccess(Palabra palabra) {
                 try {
                      //asignamos sus valores de manera asyncrona
-
+                     idPalabra.setText(Integer.toString(palabra.getIdPalabra()));
                      palabraAAdivinar.setText(palabra.getPalabra().toLowerCase());
                      palabraDesordenada.setText(desordenarPalabra(palabra.getPalabra().toLowerCase()));
                      ayuda.setText(palabra.getDescripcion());
@@ -119,7 +181,7 @@ public class PalabraController {
                 Toast.makeText(context, msg, Toast.LENGTH_LONG).show();
             }
         });
-    }
+    }//fin del método
 
     /**
      * Desordena la palabra obtenida desde la bd
@@ -137,7 +199,6 @@ public class PalabraController {
         for (Character c : listaCaracteres) {
             sb.append(c);
         }
-
         return sb.toString();
     }
 

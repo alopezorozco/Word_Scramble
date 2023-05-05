@@ -3,8 +3,6 @@ package com.example.wordscramble.models;
 import android.content.Context;
 import android.net.Uri;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -18,14 +16,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class PalabraDao {
     private Palabra palabra = null;
     private Context context;
     private RequestQueue mRequestQueue;
     public static int idAsignatura;
+    boolean respuesta;
 
     public PalabraDao(Context context){
         this.context = context;
@@ -46,6 +42,7 @@ public class PalabraDao {
             public void onResponse(String response) {
 
                 try{
+                    //utilizamos una variable de tipo JSON ya que retorna un string en formato JSON
                     JSONArray jsonArray = new JSONArray(response);
 
                     // Recorremos el array JSON y almacenamos los datos en una lista
@@ -60,8 +57,9 @@ public class PalabraDao {
 
 
                         palabra = new Palabra(idPalabra, nombreAsignatura, descripcion, ponderacion);
+                        onCallBack.onSuccess(palabra);
                     }//fin del for
-                    onCallBack.onSuccess(palabra);
+
                 } catch (JSONException e) {
                     e.printStackTrace();
                     onCallBack.onFail(e.toString());
@@ -70,9 +68,9 @@ public class PalabraDao {
                         throw new Exception("No exiten palabras a adivinar en esta categoría");
                     } catch (Exception e) {
                         throw new RuntimeException(e);
-                    }
-                }
-            }
+                    }//fin del catch
+                }//fin del catch
+            }//fin del método
 
         }, new Response.ErrorListener() {
             @Override
@@ -81,46 +79,74 @@ public class PalabraDao {
             }
         });
 
-
-
-
         mRequestQueue.add(stringRequest);
         return null;
     }//fin del método
 
-    //método para guardar la palabra encontrada
-    public void guadarAcierto(){
-        //creamos un objeto JSONObject con los datos a enviar
-        JSONObject jsonObject = new JSONObject();
+    /*public void guardarAcierto(int idUsuario, int idPalabra, final CallBack onCallBack){
+        //URL del endpoint
+        String url = GlobalVariables.URL+"guardar-acierto/"+Uri.encode(String.valueOf(idUsuario))+"/" +
+                Uri.encode(String.valueOf(idPalabra));
 
-        User user = new User(1);
-        Palabra palabra = new Palabra(1);
-
-            try{
-                jsonObject.put("Usuario", user);
-                jsonObject.put("Palabra", palabra);
-                //jsonObject.put("", 5);
-            }catch(JSONException ex){
-                ex.printStackTrace();
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                response = "Los datos han sido guardados";
             }
 
-        //definimos la URL
-        String url = GlobalVariables.URL + "/save-acierto/acierto";
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                try {
+                    throw new Exception("prueba");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject,
-                response -> {
-                    //manejamos la respuesta del servidor
-                },
-                error ->{
-                    //manejamos el error de la solicitud
-                });
+        mRequestQueue.add(stringRequest);
+    }//fin del método guardarAcierto*/
 
-        mRequestQueue.add(jsonObjectRequest);
+    //método para guardar la palabra encontrada
+    public void guadarAcierto(int idUsuario, int idPalabra, final CallBackValidation onCallBack){
+        String url = GlobalVariables.URL+"guardar-acierto/"+Uri.encode(String.valueOf(idUsuario))+"/" +
+                Uri.encode(String.valueOf(idPalabra));
+
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                    response = "true";
+                    onCallBack.onSuccess(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                try {
+                    throw new Exception("Error al realizar la petición");
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        });
+
+        mRequestQueue.add(stringRequest);
     }
 
 
+    /**
+     * Retorna un objeto de tipo palabra si la operación fue exitosa
+     */
     public interface CallBack {
         void onSuccess(Palabra palabra);
+        void onFail(String msg);
+    }
+
+    /**
+     * Retorna true o false si la operación fue exitosa
+     */
+    public interface CallBackValidation{
+        void onSuccess(String respuesta);
         void onFail(String msg);
     }
 }
